@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 @Environment(EnvType.SERVER)
 public class RamaMc implements DedicatedServerModInitializer, ServerWorldEvents.Load {
     public static ServerWorld world = null;
+    public static MinecraftServer server = null;
     public static final Logger LOGGER = LoggerFactory.getLogger("rama-mc");
     @Override
     public void onInitializeServer() {
@@ -21,9 +22,10 @@ public class RamaMc implements DedicatedServerModInitializer, ServerWorldEvents.
     @Override
     public void onWorldLoad(MinecraftServer server, ServerWorld world) {
         RamaMc.world = world;
+        RamaMc.server = server;
     }
 
     public static boolean isDay() {
-        return world.isDay();
+        return server.getOverworld().isDay();
     }
 }

@@ -15,8 +15,8 @@ public class HungerManagerMixin {
      * @reason Allow for changing exhaustion amount
      */
     @Overwrite
-    public void addExhaustion(float exhaustion) { // TODO Problem: world access is wrong
-        if (RamaMc.world != null && RamaMc.world.isDay()){
+    public void addExhaustion(float exhaustion) {
+        if (RamaMc.isDay()){
             exhaustion *= 0.3;
         }
         this.exhaustion = Math.min(this.exhaustion + exhaustion, 40.0F);

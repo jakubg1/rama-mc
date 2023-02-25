@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "rama-mc",
+  "version": "${version}",
+  "name": "Rama Mc",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/rama-mc/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "skycat.ramamc.RamaMc"
+    ]
+  },
+  "mixins": [
+    "rama-mc.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.16",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}

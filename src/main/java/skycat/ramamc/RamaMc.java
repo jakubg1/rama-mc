@@ -21,6 +21,7 @@ public class RamaMc implements DedicatedServerModInitializer, ServerWorldEvents.
     public static ServerWorld world = null;
     public static MinecraftServer server = null;
     public static final Logger LOGGER = LoggerFactory.getLogger("rama-mc");
+    public static final BigMealManager BIG_MEAL_MANAGER = new BigMealManager();
 
     @Override
     public void afterKilledOtherEntity(ServerWorld world, Entity entity, LivingEntity killedEntity) {

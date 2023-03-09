@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import skycat.ramamc.*;
 
@@ -42,6 +43,15 @@ public class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAcce
             }
         }
 
+    }
+
+    @ModifyVariable(method = "setWeather", at = @At("HEAD"), ordinal = 1)
+    private int modifyRainTime(int rainDuration) {
+        if (rainDuration > 0) {
+            RamaMc.LOGGER.info("Rain length changed"); // WARN: Debug
+            return 12000;
+        }
+        return rainDuration;
     }
 
     @Override

@@ -1,13 +1,18 @@
 package skycat.ramamc.mixin;
 
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import skycat.ramamc.BigMealManager;
 import skycat.ramamc.RamaMc;
 
@@ -36,5 +41,13 @@ public abstract class PlayerEntityMixin {
         }
         // Join the meal
         meal.addParticipant(player);
+    }
+
+    @ModifyArgs(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+    public void changeDamage(Args args) {
+        DamageSource source = args.get(0);
+        if (RamaMc.isDay() && source.getAttacker() instanceof Monster) {
+            args.set(1, (float)args.get(1) * 100);
+        }
     }
 }

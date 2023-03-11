@@ -1,8 +1,15 @@
 package skycat.ramamc.mixin;
 
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.HungerConstants;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Util;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,9 +19,15 @@ import skycat.ramamc.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 @Mixin(ServerWorld.class)
-public class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAccess {
+public abstract class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAccess {
+    @Shadow @Final
+    List<ServerPlayerEntity> players;
+
+    @Shadow public abstract List<ServerPlayerEntity> getPlayers();
+
     @Unique
     public ArrayList<MealTimer> mealTimers = new ArrayList<>();
     @Unique
@@ -22,6 +35,18 @@ public class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAcce
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void onTick(CallbackInfo ci) {
+        for (ServerPlayerEntity player : getPlayers()) {
+            // 1 in 10 chance every tick
+            if (Util.getMeasuringTimeMs() - player.getLastActionTime() > 10000 && RamaMc.RANDOM.nextInt(10) == 0) { // It's been 10 seconds since the last player action
+                if (player.getHungerManager().getFoodLevel() < HungerConstants.FULL_FOOD_LEVEL/2) {
+                    if (player.hasVehicle()) {
+                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 2, 0));
+                    } else {
+                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 1, 0));
+                    }
+                }
+            }
+        }
         if (!mealTimers.isEmpty()) {
             Iterator<MealTimer> iterator = mealTimers.iterator();
             while (iterator.hasNext()) {

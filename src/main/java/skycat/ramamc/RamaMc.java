@@ -16,12 +16,15 @@ import net.minecraft.server.world.ServerWorld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+
 @Environment(EnvType.SERVER)
 public class RamaMc implements DedicatedServerModInitializer, ServerWorldEvents.Load, ServerEntityCombatEvents.AfterKilledOtherEntity {
     public static ServerWorld world = null;
     public static MinecraftServer server = null;
     public static final Logger LOGGER = LoggerFactory.getLogger("rama-mc");
     public static final BigMealManager BIG_MEAL_MANAGER = new BigMealManager();
+    public static final Random RANDOM = new Random();
 
     @Override
     public void afterKilledOtherEntity(ServerWorld world, Entity entity, LivingEntity killedEntity) {

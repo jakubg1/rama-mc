@@ -4,9 +4,10 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Util;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -18,6 +19,8 @@ import skycat.ramamc.RamaMc;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
+    @Unique public long lastMoved = Util.getMeasuringTimeMs();
+
     @Inject(method = "canConsume", at = @At("RETURN"), cancellable = true)
     public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(!RamaMc.isDay()); // Stop from eating if it is day, allow if it is night

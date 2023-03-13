@@ -1,6 +1,7 @@
 package skycat.ramamc;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +59,12 @@ public class BigMealManager {
             for (PlayerEntity player : meal.participants) {
                 float absorptionAmount = Math.min(MAX_ABSORPTION_AMOUNT, player.getAbsorptionAmount() + ABSORPTION_AMOUNT);
                 player.setAbsorptionAmount(absorptionAmount); // Give extra absorption
-                ((AbsorptionTimerAccess)RamaMc.world).set(ABSORPTION_LENGTH + ((mealSize - MIN_MEAL_SIZE) * LENGTH_BONUS), player, absorptionAmount); // 4800 is 1/5 of a day
+                // long effectTime = ABSORPTION_LENGTH + ((mealSize - MIN_MEAL_SIZE) * LENGTH_BONUS);
+                long effectTime =  601;
+                ((AbsorptionTimerAccess)RamaMc.world).set(effectTime, player, absorptionAmount); // 4800 is 1/5 of a day
+                ((RunnableTimerAccess)RamaMc.world).rama_mc_setRunnableTimer(()-> {
+                    player.sendMessage(Text.of("Your big meal bonus will run out soon."));
+                }, Math.max(effectTime - 600, 0)); // 30 sec warning
             }
         }
         mealList.remove(meal);

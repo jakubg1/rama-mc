@@ -14,6 +14,14 @@ public class AbsorptionTimer {
     }
 
     public void expire() {
+        if (player.isRemoved()) {
+            float maxHealthToRemove = health;
+            if (RamaMc.removeAbsorptionMap.containsKey(player.getUuid())) {
+                maxHealthToRemove += RamaMc.removeAbsorptionMap.get(player.getUuid());
+            }
+            RamaMc.removeAbsorptionMap.put(player.getUuid(), maxHealthToRemove);
+            return;
+        }
         if (player.getAbsorptionAmount() > 0) {
             player.setAbsorptionAmount(player.getAbsorptionAmount() - Math.min(health, player.getAbsorptionAmount())); // Remove their absorption, taking either the number of hearts or all of them if they don't have enough.
         }

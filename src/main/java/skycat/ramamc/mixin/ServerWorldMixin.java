@@ -1,6 +1,5 @@
 package skycat.ramamc.mixin;
 
-import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerConstants;
@@ -39,13 +38,17 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
     @Inject(method = "tick", at = @At("TAIL"))
     private void onTick(CallbackInfo ci) {
         for (ServerPlayerEntity player : getPlayers()) {
-            // 1 in 10 chance every tick
-            if (Util.getMeasuringTimeMs() - player.getLastActionTime() > 10000 && RamaMc.RANDOM.nextInt(10) == 0) { // It's been 10 seconds since the last player action
-                if (player.getHungerManager().getFoodLevel() < HungerConstants.FULL_FOOD_LEVEL/2) {
-                    if (player.hasVehicle()) {
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 2, 0));
-                    } else {
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 1, 0));
+            long timeSinceLastAction = Util.getMeasuringTimeMs() - player.getLastActionTime();
+            if (RamaMc.isDay()) { // IF it's day
+                int multiplier = player.hasVehicle()?2:1; // Make things faster if the player is sitting
+                if (timeSinceLastAction > 60000 / multiplier) { // 1 min if standing, 30 secs if sitting
+                    if (player.getHungerManager().getFoodLevel() < HungerConstants.FULL_FOOD_LEVEL / 2) { // If less than half full
+                        if (RamaMc.RANDOM.nextInt(60) <= multiplier) { // 1/30 if sitting
+                            player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 1, 0));
+                        }
+                    }
+                    if (RamaMc.RANDOM.nextInt(100) <= multiplier) {
+                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 40, 0));
                     }
                 }
             }

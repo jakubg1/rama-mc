@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import skycat.ramamc.BigMealManager;
 import skycat.ramamc.RamaMc;
+import skycat.ramamc.RamaMcConstants;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
@@ -49,8 +50,12 @@ public abstract class PlayerEntityMixin {
     @ModifyArgs(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
     public void changeDamage(Args args) {
         DamageSource source = args.get(0);
-        if (RamaMc.isDay() && source.getAttacker() instanceof Monster) {
-            args.set(1, (float)args.get(1) * 100);
+        if (RamaMc.isDay()) {
+            if (source.getAttacker() instanceof Monster) {
+                args.set(1, (float) args.get(1) * RamaMcConstants.MONSTER_DAMAGE_MULTIPLIER_DAY);
+            }
+        } else {
+            args.set(1, (float) args.get(1) * (1 - RamaMcConstants.PLAYER_RESISTANCE_PERCENT_NIGHT));
         }
     }
 }

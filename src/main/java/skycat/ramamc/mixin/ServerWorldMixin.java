@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAccess {
+public abstract class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAccess, RunnableTimerAccess {
     @Shadow @Final
     List<ServerPlayerEntity> players;
 
@@ -32,6 +32,8 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
     public ArrayList<MealTimer> mealTimers = new ArrayList<>();
     @Unique
     public ArrayList<AbsorptionTimer> absorptionTimers = new ArrayList<>();
+    @Unique
+    public ArrayList<RunnableTimer> runnableTimers = new ArrayList<>();
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void onTick(CallbackInfo ci) {
@@ -46,6 +48,19 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
                     }
                 }
             }
+        }
+        if (!runnableTimers.isEmpty()) {
+            ArrayList<RunnableTimer> removeTimers = new ArrayList<>();
+            // This may be a funny way, but it should work and allow new timers to be set.
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < runnableTimers.size(); i++) {
+                RunnableTimer timer = runnableTimers.get(i);
+                if (--timer.ticks == 0) {
+                    timer.expire();
+                    removeTimers.add(timer);
+                }
+            }
+            runnableTimers.removeAll(removeTimers);
         }
         if (!mealTimers.isEmpty()) {
             Iterator<MealTimer> iterator = mealTimers.iterator();
@@ -87,5 +102,15 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
     @Override
     public void set(long ticks, PlayerEntity player, float health) {
         absorptionTimers.add(new AbsorptionTimer(ticks, player, health));
+    }
+
+    @Override
+    public void rama_mc_setRunnableTimer(RunnableTimer timer) {
+        runnableTimers.add(timer);
+    }
+
+    @Override
+    public void rama_mc_setRunnableTimer(Runnable runnable, long ticks) {
+        runnableTimers.add(new RunnableTimer(runnable, ticks));
     }
 }

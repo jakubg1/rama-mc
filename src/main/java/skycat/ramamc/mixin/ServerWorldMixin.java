@@ -1,5 +1,6 @@
 package skycat.ramamc.mixin;
 
+import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerConstants;

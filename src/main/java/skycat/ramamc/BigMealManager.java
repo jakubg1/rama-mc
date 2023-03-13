@@ -8,13 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class BigMealManager {
-    public static final double MEAL_RANGE = 20.0d;
-    public static final long MEAL_LENGTH = 200;
-    public static final int ABSORPTION_AMOUNT = 10;
-    public static final long ABSORPTION_LENGTH = 80;
-    public static final int MIN_MEAL_SIZE = 1;
-    public static final long LENGTH_BONUS = 240000;
-    public static final float MAX_ABSORPTION_AMOUNT = 20;
     public ArrayList<BigMeal> mealList = new ArrayList<>();
 
     public boolean isNearBigMeal(PlayerEntity player) {
@@ -24,7 +17,7 @@ public class BigMealManager {
     @Nullable
     public BigMeal getMealInRange(BlockPos pos) {
         for (BigMeal meal : mealList) {
-            if (pos.isWithinDistance(meal.pos, MEAL_RANGE)) {
+            if (pos.isWithinDistance(meal.pos, RamaMcConstants.MEAL_RANGE)) {
                 return meal;
             }
         }
@@ -45,7 +38,7 @@ public class BigMealManager {
         RamaMc.LOGGER.info("Started meal"); // WARN Debug
         BigMeal meal = new BigMeal(pos);
         mealList.add(meal);
-        ((BigMealTimerAccess) RamaMc.world).mystical_setMealTimer(MEAL_LENGTH, meal);
+        ((BigMealTimerAccess) RamaMc.world).mystical_setMealTimer(RamaMcConstants.MEAL_LENGTH, meal);
         return meal;
     }
 
@@ -55,16 +48,15 @@ public class BigMealManager {
             RamaMc.LOGGER.info("Participant: " + player.getName().getString()); // WARN debug
         }
         int mealSize = meal.participants.size();
-        if (mealSize >= MIN_MEAL_SIZE) {
+        if (mealSize >= RamaMcConstants.MIN_MEAL_SIZE) {
             for (PlayerEntity player : meal.participants) {
-                float absorptionAmount = Math.min(MAX_ABSORPTION_AMOUNT, player.getAbsorptionAmount() + ABSORPTION_AMOUNT);
+                float absorptionAmount = Math.min(RamaMcConstants.MAX_MEAL_ABSORPTION_AMOUNT, player.getAbsorptionAmount() + RamaMcConstants.MEAL_ABSORPTION_AMOUNT);
                 player.setAbsorptionAmount(absorptionAmount); // Give extra absorption
-                // long effectTime = ABSORPTION_LENGTH + ((mealSize - MIN_MEAL_SIZE) * LENGTH_BONUS);
-                long effectTime =  601;
-                ((AbsorptionTimerAccess)RamaMc.world).set(effectTime, player, absorptionAmount); // 4800 is 1/5 of a day
+                long effectTime = RamaMcConstants.MEAL_ABSORPTION_LENGTH + ((mealSize - RamaMcConstants.MIN_MEAL_SIZE) * RamaMcConstants.MEAL_ABSORPTION_LENGTH_BONUS);
+                ((AbsorptionTimerAccess)RamaMc.world).set(effectTime, player, absorptionAmount);
                 ((RunnableTimerAccess)RamaMc.world).rama_mc_setRunnableTimer(()-> {
                     player.sendMessage(Text.of("Your big meal bonus will run out soon."));
-                }, Math.max(effectTime - 600, 0)); // 30 sec warning
+                }, Math.max(effectTime - RamaMcConstants.MEAL_EXPIRATION_WARNING, 0));
             }
         }
         mealList.remove(meal);

@@ -77,7 +77,7 @@ public class RamaMc implements DedicatedServerModInitializer, ServerWorldEvents.
     public void onStopSleeping(LivingEntity entity, BlockPos sleepingPos) {
         if (entity.isPlayer() && allowSleep) {
                 allowSleep = false;
-                ((RunnableTimerAccess) world).rama_mc_setRunnableTimer(()-> RamaMc.allowSleep = true, 24000L * 3); // Allow sleeping in three days
+                ((RunnableTimerAccess) world).rama_mc_setRunnableTimer(()-> RamaMc.allowSleep = true, RamaMcConstants.SLEEPING_COOLDOWN);
         }
     }
 

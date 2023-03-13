@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import skycat.ramamc.RamaMc;
+import skycat.ramamc.RamaMcConstants;
 
 @Mixin(HungerManager.class)
 public class HungerManagerMixin {
@@ -12,7 +13,7 @@ public class HungerManagerMixin {
     @ModifyVariable(method = "addExhaustion", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public float changeExhaustion(float exhaustion) {
         if (RamaMc.isDay()) {
-            exhaustion *= 0.3;
+            exhaustion *= RamaMcConstants.HUNGER_MULTIPLIER_DAY;
         }
         return exhaustion;
     }

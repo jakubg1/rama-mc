@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static skycat.ramamc.RamaMcConstants.*;
+
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAccess, RunnableTimerAccess {
     @Shadow @Final
@@ -40,14 +42,14 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
         for (ServerPlayerEntity player : getPlayers()) {
             long timeSinceLastAction = Util.getMeasuringTimeMs() - player.getLastActionTime();
             if (RamaMc.isDay()) { // IF it's day
-                int multiplier = player.hasVehicle()?2:1; // Make things faster if the player is sitting
-                if (timeSinceLastAction > 60000 / multiplier) { // 1 min if standing, 30 secs if sitting
+                int multiplier = player.hasVehicle()?SITTING_MULTIPLIER:1; // Make things faster if the player is sitting
+                if (timeSinceLastAction > STANDING_REST_TIME / multiplier) {
                     if (player.getHungerManager().getFoodLevel() < HungerConstants.FULL_FOOD_LEVEL / 2) { // If less than half full
-                        if (RamaMc.RANDOM.nextInt(60) <= multiplier) { // 1/30 if sitting
+                        if (RamaMc.RANDOM.nextInt(STANDING_SATURATION_CHANCE) <= multiplier) {
                             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 1, 0));
                         }
                     }
-                    if (RamaMc.RANDOM.nextInt(100) <= multiplier) {
+                    if (RamaMc.RANDOM.nextInt(STANDING_REGENERATION_CHANCE) <= multiplier) {
                         player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 40, 0));
                     }
                 }
@@ -89,7 +91,7 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
 
     }
 
-    @ModifyVariable(method = "setWeather", at = @At("HEAD"), ordinal = 1)
+    @ModifyVariable(method = "setWeather", at = @At("HEAD"), ordinal = 1, argsOnly = true)
     private int modifyRainTime(int rainDuration) {
         if (rainDuration > 0) {
             RamaMc.LOGGER.info("Rain length changed"); // WARN: Debug

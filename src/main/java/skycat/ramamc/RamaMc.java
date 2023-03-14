@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
@@ -15,12 +16,17 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.PotionItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.include.com.google.gson.Gson;
@@ -36,7 +42,9 @@ public class RamaMc implements DedicatedServerModInitializer,
         ServerEntityCombatEvents.AfterKilledOtherEntity,
         EntitySleepEvents.AllowResettingTime,
         EntitySleepEvents.StopSleeping,
-        ServerPlayConnectionEvents.Join, ServerLifecycleEvents.ServerStopping {
+        ServerPlayConnectionEvents.Join,
+        ServerLifecycleEvents.ServerStopping,
+        UseItemCallback {
     public static ServerWorld world = null;
     public static MinecraftServer server = null;
     public static final Logger LOGGER = LoggerFactory.getLogger("rama-mc");
@@ -63,6 +71,16 @@ public class RamaMc implements DedicatedServerModInitializer,
     }
 
     @Override
+    public TypedActionResult<ItemStack> interact(PlayerEntity player, World world, Hand hand) {
+        // Stop players from drinking potions during the day.
+        ItemStack stack = player.getStackInHand(hand);
+        if (RamaMc.isDay() && stack.getItem().getClass().equals(PotionItem.class)) {
+            return TypedActionResult.fail(stack);
+        }
+        return TypedActionResult.pass(stack);
+    }
+
+    @Override
     public void onInitializeServer() {
         ServerWorldEvents.LOAD.register(this);
         ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(this);
@@ -70,6 +88,7 @@ public class RamaMc implements DedicatedServerModInitializer,
         EntitySleepEvents.ALLOW_RESETTING_TIME.register(this);
         ServerPlayConnectionEvents.JOIN.register(this);
         ServerLifecycleEvents.SERVER_STOPPING.register(this);
+        UseItemCallback.EVENT.register(this);
     }
 
     @Override

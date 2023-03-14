@@ -4,7 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class RamaMcConstants {
+public class RamaMcConfig {
     public final float MONSTER_DAMAGE_MULTIPLIER_DAY = 1.5f; // Deal (x) times more damage
     public final float PLAYER_RESISTANCE_PERCENT_NIGHT = 0.25f; // Resist (x) of damage
     public final float PLAYER_DAMAGE_MULTIPLIER_DAY = 1.3f; // (x) times attack
@@ -25,11 +25,11 @@ public class RamaMcConstants {
     public final int MAX_RESTING_SATURATION = 15;
     public static final String SAVE_PATH = "config/rama-mc.json";
 
-    public static RamaMcConstants load() {
+    public static RamaMcConfig load() {
         try (FileReader reader = new FileReader(SAVE_PATH)) {
-            return RamaMc.GSON.fromJson(reader, RamaMcConstants.class);
+            return RamaMc.GSON.fromJson(reader, RamaMcConfig.class);
         } catch (IOException e) {
-            return new RamaMcConstants();
+            return new RamaMcConfig();
         }
     }
 

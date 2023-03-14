@@ -54,7 +54,7 @@ public class RamaMc implements DedicatedServerModInitializer,
     public static boolean allowSleep = true;
     public static final HashMap<UUID, Float> removeAbsorptionMap = new HashMap<>();
     public static final Gson GSON = new GsonBuilder().create();
-    public static final RamaMcConstants CONFIG = RamaMcConstants.load();
+    public static final RamaMcConfig CONFIG = RamaMcConfig.load();
 
 
     @Override

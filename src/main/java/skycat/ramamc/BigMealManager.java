@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class BigMealManager {
-    public ArrayList<BigMeal> mealList = new ArrayList<>();
+    public final ArrayList<BigMeal> mealList = new ArrayList<>();
 
     public boolean isNearBigMeal(PlayerEntity player) {
         return getMealInRange(player) != null;
@@ -54,17 +54,18 @@ public class BigMealManager {
                 player.setAbsorptionAmount(absorptionAmount); // Give extra absorption
                 long effectTime = RamaMc.CONFIG.MEAL_ABSORPTION_LENGTH + ((mealSize - RamaMc.CONFIG.MIN_MEAL_SIZE) * RamaMc.CONFIG.MEAL_ABSORPTION_LENGTH_BONUS);
                 ((AbsorptionTimerAccess)RamaMc.world).set(effectTime, player, absorptionAmount);
-                ((RunnableTimerAccess)RamaMc.world).rama_mc_setRunnableTimer(()-> {
-                    player.sendMessage(Text.of("Your big meal bonus will run out soon."));
-                }, Math.max(effectTime - RamaMc.CONFIG.MEAL_EXPIRATION_WARNING, 0));
+                ((RunnableTimerAccess)RamaMc.world).rama_mc_setRunnableTimer(
+                        ()-> player.sendMessage(Text.of("Your big meal bonus will run out soon."))
+                        , Math.max(effectTime - RamaMc.CONFIG.MEAL_EXPIRATION_WARNING, 0)
+                );
             }
         }
         mealList.remove(meal);
     }
 
     public static class BigMeal {
-        public ArrayList<PlayerEntity> participants = new ArrayList<>();
-        public BlockPos pos;
+        public final ArrayList<PlayerEntity> participants = new ArrayList<>();
+        public final BlockPos pos;
 
         public BigMeal(BlockPos pos) {
             this.pos = pos;

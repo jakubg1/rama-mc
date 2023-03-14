@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class AbsorptionTimer {
     public long ticks;
-    public PlayerEntity player;
+    public final PlayerEntity player;
     public float health;
 
     public AbsorptionTimer(long ticks, PlayerEntity player, float health) {

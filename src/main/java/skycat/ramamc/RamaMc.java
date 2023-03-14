@@ -17,6 +17,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.MilkBucketItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -72,9 +73,9 @@ public class RamaMc implements DedicatedServerModInitializer,
 
     @Override
     public TypedActionResult<ItemStack> interact(PlayerEntity player, World world, Hand hand) {
-        // Stop players from drinking potions during the day.
+        // Stop players from drinking potions/milk during the day.
         ItemStack stack = player.getStackInHand(hand);
-        if (RamaMc.isDay() && stack.getItem().getClass().equals(PotionItem.class)) {
+        if (RamaMc.isDay() && (stack.getItem().getClass().equals(PotionItem.class)) || stack.getItem().getClass().equals(MilkBucketItem.class)) {
             return TypedActionResult.fail(stack);
         }
         return TypedActionResult.pass(stack);

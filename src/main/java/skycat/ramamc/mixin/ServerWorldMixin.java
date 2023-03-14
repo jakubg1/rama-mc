@@ -23,7 +23,8 @@ import java.util.List;
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAccess, RunnableTimerAccess {
 
-    @Shadow public abstract List<ServerPlayerEntity> getPlayers();
+    @Shadow
+    public abstract List<ServerPlayerEntity> getPlayers();
 
     @Unique
     public ArrayList<MealTimer> mealTimers = new ArrayList<>();
@@ -37,7 +38,7 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
         for (ServerPlayerEntity player : getPlayers()) {
             long timeSinceLastAction = Util.getMeasuringTimeMs() - player.getLastActionTime();
             if (RamaMc.isDay()) { // IF it's day
-                int multiplier = player.hasVehicle()?RamaMc.CONFIG.SITTING_MULTIPLIER:1; // Make things faster if the player is sitting
+                int multiplier = player.hasVehicle() ? RamaMc.CONFIG.SITTING_MULTIPLIER : 1; // Make things faster if the player is sitting
                 if (timeSinceLastAction > RamaMc.CONFIG.STANDING_REST_TIME / multiplier) {
                     if (player.getHungerManager().getFoodLevel() < HungerConstants.FULL_FOOD_LEVEL / 2) { // If less than half full
                         if (RamaMc.RANDOM.nextInt(RamaMc.CONFIG.STANDING_SATURATION_CHANCE) <= multiplier) {

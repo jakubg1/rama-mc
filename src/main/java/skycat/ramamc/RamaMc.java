@@ -113,8 +113,8 @@ public class RamaMc implements DedicatedServerModInitializer,
     @Override
     public void onStopSleeping(LivingEntity entity, BlockPos sleepingPos) {
         if (entity.isPlayer() && allowSleep) {
-                allowSleep = false;
-                ((RunnableTimerAccess) world).rama_mc_setRunnableTimer(()-> RamaMc.allowSleep = true, RamaMc.CONFIG.SLEEPING_COOLDOWN);
+            allowSleep = false;
+            ((RunnableTimerAccess) world).rama_mc_setRunnableTimer(() -> RamaMc.allowSleep = true, RamaMc.CONFIG.SLEEPING_COOLDOWN);
         }
     }
 

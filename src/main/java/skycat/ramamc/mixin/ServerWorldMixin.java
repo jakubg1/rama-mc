@@ -2,7 +2,6 @@ package skycat.ramamc.mixin;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.HungerConstants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -40,7 +39,7 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
             if (RamaMc.isDay()) { // IF it's day
                 int multiplier = player.hasVehicle() ? RamaMc.CONFIG.SITTING_MULTIPLIER : 1; // Make things faster if the player is sitting
                 if (timeSinceLastAction > RamaMc.CONFIG.STANDING_REST_TIME / multiplier) {
-                    if (player.getHungerManager().getFoodLevel() < HungerConstants.FULL_FOOD_LEVEL / 2) { // If less than half full
+                    if (player.getHungerManager().getFoodLevel() < RamaMc.CONFIG.MAX_RESTING_SATURATION) {
                         if (RamaMc.RANDOM.nextInt(RamaMc.CONFIG.STANDING_SATURATION_CHANCE) <= multiplier) {
                             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 1, 0));
                         }

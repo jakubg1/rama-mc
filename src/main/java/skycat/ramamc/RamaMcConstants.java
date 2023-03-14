@@ -22,6 +22,7 @@ public class RamaMcConstants {
     public final float MAX_MEAL_ABSORPTION_AMOUNT = 20; // (x)/2 hearts
     public final int MEAL_EXPIRATION_WARNING = 300; // (x) ticks
     public final long SLEEPING_COOLDOWN = 24000L * 3; // (x) ticks
+    public final int MAX_RESTING_SATURATION = 15;
     public static final String SAVE_PATH = "config/rama-mc.json";
 
     public static RamaMcConstants load() {

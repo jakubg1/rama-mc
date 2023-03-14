@@ -35,7 +35,7 @@ public class BigMealManager {
      * @return The new meal
      */
     public BigMeal startMeal(BlockPos pos) {
-        RamaMc.LOGGER.info("Started meal"); // WARN Debug
+        RamaMc.LOGGER.info("Started meal");
         BigMeal meal = new BigMeal(pos);
         mealList.add(meal);
         ((BigMealTimerAccess) RamaMc.world).mystical_setMealTimer(RamaMc.CONFIG.MEAL_LENGTH, meal);
@@ -43,9 +43,9 @@ public class BigMealManager {
     }
 
     public void endMeal(BigMeal meal) {
-        RamaMc.LOGGER.info("Big meal finished."); // WARN debug
+        RamaMc.LOGGER.info("Big meal finished.");
         for (PlayerEntity player : meal.participants) {
-            RamaMc.LOGGER.info("Participant: " + player.getName().getString()); // WARN debug
+            RamaMc.LOGGER.info("Participant: " + player.getName().getString());
         }
         int mealSize = meal.participants.size();
         if (mealSize >= RamaMc.CONFIG.MIN_MEAL_SIZE) {

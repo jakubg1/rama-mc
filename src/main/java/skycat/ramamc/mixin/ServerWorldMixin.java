@@ -92,7 +92,7 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
     @ModifyVariable(method = "setWeather", at = @At("HEAD"), ordinal = 1, argsOnly = true)
     private int modifyRainTime(int rainDuration) {
         if (rainDuration > 0) {
-            RamaMc.LOGGER.info("Rain length changed"); // WARN: Debug
+            RamaMc.LOGGER.info("Rain length changed");
             return 12000;
         }
         return rainDuration;

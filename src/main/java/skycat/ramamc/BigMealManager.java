@@ -17,7 +17,7 @@ public class BigMealManager {
     @Nullable
     public BigMeal getMealInRange(BlockPos pos) {
         for (BigMeal meal : mealList) {
-            if (pos.isWithinDistance(meal.pos, RamaMcConstants.MEAL_RANGE)) {
+            if (pos.isWithinDistance(meal.pos, RamaMc.CONFIG.MEAL_RANGE)) {
                 return meal;
             }
         }
@@ -38,7 +38,7 @@ public class BigMealManager {
         RamaMc.LOGGER.info("Started meal"); // WARN Debug
         BigMeal meal = new BigMeal(pos);
         mealList.add(meal);
-        ((BigMealTimerAccess) RamaMc.world).mystical_setMealTimer(RamaMcConstants.MEAL_LENGTH, meal);
+        ((BigMealTimerAccess) RamaMc.world).mystical_setMealTimer(RamaMc.CONFIG.MEAL_LENGTH, meal);
         return meal;
     }
 
@@ -48,15 +48,15 @@ public class BigMealManager {
             RamaMc.LOGGER.info("Participant: " + player.getName().getString()); // WARN debug
         }
         int mealSize = meal.participants.size();
-        if (mealSize >= RamaMcConstants.MIN_MEAL_SIZE) {
+        if (mealSize >= RamaMc.CONFIG.MIN_MEAL_SIZE) {
             for (PlayerEntity player : meal.participants) {
-                float absorptionAmount = Math.min(RamaMcConstants.MAX_MEAL_ABSORPTION_AMOUNT, player.getAbsorptionAmount() + RamaMcConstants.MEAL_ABSORPTION_AMOUNT);
+                float absorptionAmount = Math.min(RamaMc.CONFIG.MAX_MEAL_ABSORPTION_AMOUNT, player.getAbsorptionAmount() + RamaMc.CONFIG.MEAL_ABSORPTION_AMOUNT);
                 player.setAbsorptionAmount(absorptionAmount); // Give extra absorption
-                long effectTime = RamaMcConstants.MEAL_ABSORPTION_LENGTH + ((mealSize - RamaMcConstants.MIN_MEAL_SIZE) * RamaMcConstants.MEAL_ABSORPTION_LENGTH_BONUS);
+                long effectTime = RamaMc.CONFIG.MEAL_ABSORPTION_LENGTH + ((mealSize - RamaMc.CONFIG.MIN_MEAL_SIZE) * RamaMc.CONFIG.MEAL_ABSORPTION_LENGTH_BONUS);
                 ((AbsorptionTimerAccess)RamaMc.world).set(effectTime, player, absorptionAmount);
                 ((RunnableTimerAccess)RamaMc.world).rama_mc_setRunnableTimer(()-> {
                     player.sendMessage(Text.of("Your big meal bonus will run out soon."));
-                }, Math.max(effectTime - RamaMcConstants.MEAL_EXPIRATION_WARNING, 0));
+                }, Math.max(effectTime - RamaMc.CONFIG.MEAL_EXPIRATION_WARNING, 0));
             }
         }
         mealList.remove(meal);

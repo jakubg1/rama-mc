@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import skycat.ramamc.BigMealManager;
 import skycat.ramamc.RamaMc;
-import skycat.ramamc.RamaMcConstants;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
@@ -26,7 +25,7 @@ public abstract class PlayerEntityMixin {
     @ModifyArg(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), index = 1)
     public float modifyAttackAmount(float amount) {
         if (RamaMc.isDay()) {
-            return amount * RamaMcConstants.PLAYER_DAMAGE_MULTIPLIER_DAY;
+            return amount * RamaMc.CONFIG.PLAYER_DAMAGE_MULTIPLIER_DAY;
         }
         return amount;
     }
@@ -48,10 +47,10 @@ public abstract class PlayerEntityMixin {
         DamageSource source = args.get(0);
         if (RamaMc.isDay()) {
             if (source.getAttacker() instanceof Monster) {
-                args.set(1, (float) args.get(1) * RamaMcConstants.MONSTER_DAMAGE_MULTIPLIER_DAY);
+                args.set(1, (float) args.get(1) * RamaMc.CONFIG.MONSTER_DAMAGE_MULTIPLIER_DAY);
             }
         } else {
-            args.set(1, (float) args.get(1) * (1 - RamaMcConstants.PLAYER_RESISTANCE_PERCENT_NIGHT));
+            args.set(1, (float) args.get(1) * (1 - RamaMc.CONFIG.PLAYER_RESISTANCE_PERCENT_NIGHT));
         }
     }
 }

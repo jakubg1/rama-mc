@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static skycat.ramamc.RamaMcConstants.*;
-
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin implements BigMealTimerAccess, AbsorptionTimerAccess, RunnableTimerAccess {
     @Shadow @Final
@@ -42,15 +40,15 @@ public abstract class ServerWorldMixin implements BigMealTimerAccess, Absorption
         for (ServerPlayerEntity player : getPlayers()) {
             long timeSinceLastAction = Util.getMeasuringTimeMs() - player.getLastActionTime();
             if (RamaMc.isDay()) { // IF it's day
-                int multiplier = player.hasVehicle()?SITTING_MULTIPLIER:1; // Make things faster if the player is sitting
-                if (timeSinceLastAction > STANDING_REST_TIME / multiplier) {
+                int multiplier = player.hasVehicle()?RamaMc.CONFIG.SITTING_MULTIPLIER:1; // Make things faster if the player is sitting
+                if (timeSinceLastAction > RamaMc.CONFIG.STANDING_REST_TIME / multiplier) {
                     if (player.getHungerManager().getFoodLevel() < HungerConstants.FULL_FOOD_LEVEL / 2) { // If less than half full
-                        if (RamaMc.RANDOM.nextInt(STANDING_SATURATION_CHANCE) <= multiplier) {
+                        if (RamaMc.RANDOM.nextInt(RamaMc.CONFIG.STANDING_SATURATION_CHANCE) <= multiplier) {
                             player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 1, 0));
                         }
                     }
-                    if (RamaMc.RANDOM.nextInt(STANDING_REGENERATION_CHANCE) <= multiplier) {
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 40, 0));
+                    if (RamaMc.RANDOM.nextInt(RamaMc.CONFIG.STANDING_REGENERATION_CHANCE) <= multiplier) {
+                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 40, 1));
                     }
                 }
             }

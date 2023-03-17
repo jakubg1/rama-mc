@@ -75,7 +75,7 @@ public class RamaMc implements DedicatedServerModInitializer,
     public TypedActionResult<ItemStack> interact(PlayerEntity player, World world, Hand hand) {
         // Stop players from drinking potions/milk during the day.
         ItemStack stack = player.getStackInHand(hand);
-        if (RamaMc.isDay() && (stack.getItem().getClass().equals(PotionItem.class)) || stack.getItem().getClass().equals(MilkBucketItem.class)) {
+        if (RamaMc.isDay() && ((stack.getItem().getClass().equals(PotionItem.class)) || stack.getItem().getClass().equals(MilkBucketItem.class))) {
             return TypedActionResult.fail(stack);
         }
         return TypedActionResult.pass(stack);

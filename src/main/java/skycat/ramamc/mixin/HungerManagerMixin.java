@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import skycat.ramamc.RamaMc;
 
 @Mixin(HungerManager.class)
-public class HungerManagerMixin {
+public abstract class HungerManagerMixin {
 
     @ModifyVariable(method = "addExhaustion", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     public float changeExhaustion(float exhaustion) {

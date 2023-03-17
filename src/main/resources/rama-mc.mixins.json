@@ -4,6 +4,7 @@
   "package": "skycat.ramamc.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "CakeBlockMixin",
     "HungerManagerMixin",
     "PlayerEntityMixin",
     "ServerWorldMixin"

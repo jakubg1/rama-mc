@@ -53,6 +53,8 @@ public class RamaMc implements DedicatedServerModInitializer,
     public static final Random RANDOM = new Random();
     public static boolean allowSleep = true;
     public static final HashMap<UUID, Float> removeAbsorptionMap = new HashMap<>();
+    // If you're on this list, you need to wait until night in Overworld in order to eat.
+    public static final HashMap<UUID, Boolean> netherWaitUntilNightMap = new HashMap<>();
     public static final Gson GSON = new GsonBuilder().create();
     public static final RamaMcConfig CONFIG = RamaMcConfig.load();
 
@@ -75,7 +77,7 @@ public class RamaMc implements DedicatedServerModInitializer,
     public TypedActionResult<ItemStack> interact(PlayerEntity player, World world, Hand hand) {
         // Stop players from drinking potions/milk during the day.
         ItemStack stack = player.getStackInHand(hand);
-        if (RamaMc.isDay() && ((stack.getItem().getClass().equals(PotionItem.class)) || stack.getItem().getClass().equals(MilkBucketItem.class))) {
+        if (!canPlayerConsumeFood(player) && isStackDrinkable(stack)) {
             return TypedActionResult.fail(stack);
         }
         return TypedActionResult.pass(stack);
@@ -124,7 +126,22 @@ public class RamaMc implements DedicatedServerModInitializer,
         RamaMc.server = server;
     }
 
+    public static boolean isStackDrinkable(ItemStack stack) {
+        return stack.getItem().getClass().equals(PotionItem.class) || stack.getItem().getClass().equals(MilkBucketItem.class);
+    }
+
     public static boolean isDay() {
         return server.getOverworld().isDay();
+    }
+
+    public static boolean isPlayerInOverworld(PlayerEntity player) {
+        // HACK: Not perfect, but maybe it should remain that way?
+        return !player.getWorld().getDimension().hasFixedTime();
+    }
+
+    public static boolean canPlayerConsumeFood(PlayerEntity player) {
+        if (!isPlayerInOverworld(player))
+            return !netherWaitUntilNightMap.containsKey(player.getUuid());
+        return !isDay();
     }
 }

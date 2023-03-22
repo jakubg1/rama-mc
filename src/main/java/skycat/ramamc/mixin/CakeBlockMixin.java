@@ -19,7 +19,7 @@ import skycat.ramamc.RamaMc;
 public abstract class CakeBlockMixin {
     @Inject(method = "tryEat", at = @At("RETURN"))
     private static void tryEat(WorldAccess world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfoReturnable<ActionResult> cir) {
-        if (cir.getReturnValue().equals(ActionResult.PASS) && RamaMc.isDay()) { // Likely we blocked the event, so we need to let the client know
+        if (cir.getReturnValue().equals(ActionResult.PASS) && !RamaMc.canPlayerConsumeFood(player)) { // Likely we blocked the event, so we need to let the client know
             if (player instanceof ServerPlayerEntity) {
                 HungerManager hungerManager = player.getHungerManager();
                 ((ServerPlayerEntity) player).networkHandler.sendPacket(new HealthUpdateS2CPacket(player.getHealth(), hungerManager.getFoodLevel(), hungerManager.getSaturationLevel()));

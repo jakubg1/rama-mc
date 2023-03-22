@@ -19,7 +19,8 @@ import skycat.ramamc.RamaMc;
 public abstract class PlayerEntityMixin {
     @Inject(method = "canConsume", at = @At("RETURN"), cancellable = true)
     public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(!RamaMc.isDay()); // Stop from eating if it is day, allow if it is night
+        PlayerEntity player = (PlayerEntity) (Object) this;
+        cir.setReturnValue(RamaMc.canPlayerConsumeFood(player)); // Stop from eating if it is day, allow if it is night
     }
 
     @ModifyArg(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), index = 1)
